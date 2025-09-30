@@ -1,6 +1,7 @@
 import  { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { House, Volleyball, Spotlight, Users, Trophy } from "lucide-react";
+import PATHS from "../../Route";
 const Header = ({ user, logout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -9,7 +10,7 @@ const Header = ({ user, logout }) => {
 
   // Navigation items for public website
   const navigation = [
-    { name: "Home", href: "/", icon: <House /> },
+    { name: "Home", href:PATHS.HOME , icon: <House /> },
     { name: "Matches", href: "/matches", icon: <Volleyball /> },
     { name: "Highlights", href: "/highlights", icon:<Spotlight /> },
     { name: "Teams", href: "/teams", icon: <Users />},

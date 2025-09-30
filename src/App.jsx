@@ -7,6 +7,7 @@ import {
   Navigate
 } from 'react-router'
 import Home from "./website/Home"
+import PATHS from "./Route"
 function App() {
   
 
@@ -14,7 +15,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path={PATHS.HOME} element={<Home/>} />
         </Routes>
       </Router>
     </>
