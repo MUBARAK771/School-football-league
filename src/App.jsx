@@ -7,6 +7,8 @@ import {
   Navigate
 } from 'react-router'
 import Home from "./website/Home"
+import AdminDashboard from "./dashboard/AdminDashboard"
+import PATHS from "./Route"
 function App() {
   
 
@@ -14,7 +16,8 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path={PATHS.HOME} element={<Home/>} />
+          <Route path={PATHS.ADMINDASHBOARD} element={<AdminDashboard/>} />
         </Routes>
       </Router>
     </>
