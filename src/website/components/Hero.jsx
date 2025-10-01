@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import PATHS from '../../Route';
 
 const Hero = ({ user }) => {
   return (
@@ -54,7 +55,7 @@ const Hero = ({ user }) => {
               {!user ? (
                 <>
                   <Link
-                    to="/register"
+                    to={PATHS.REGISTER}
                     className="group bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     <span className="flex items-center justify-center">
