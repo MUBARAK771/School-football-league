@@ -10,6 +10,11 @@ import Home from "./website/Home"
 import PATHS from "./Route"
 import Register from "./website/pages/auth/Register"
 import SignIn from "./website/pages/auth/SignIn";
+import AdminDashboard from "./dashboard/AdminDashboard"
+import SchoolSportsDashboard from "./dashboard/SchoolSportsDashboard"
+import TeamDetailView from "./dashboard/TeamDetailView"
+import OfficialsDashboard from "./dashboard/OfficialsDashboard"
+
 function App() {
   
 
@@ -20,6 +25,11 @@ function App() {
           <Route path={PATHS.HOME} element={<Home />} />
           <Route path={PATHS.REGISTER} element={<Register />} />
           <Route path={PATHS.SIGNIN} element={<SignIn />} />
+
+          <Route path={PATHS.ADMINDASHBOARD} element={<AdminDashboard/>} />
+          <Route path={PATHS.SCHOOLSPORTSDASHBOARD} element={<SchoolSportsDashboard/>} />
+          <Route path={PATHS.TEAMDETAILVIEW} element={<TeamDetailView/>}/>
+          <Route path={PATHS.OFFICIALSDASHBOARD} element={<OfficialsDashboard/>}/>
         </Routes>
       </Router>
     </>
