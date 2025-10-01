@@ -1,6 +1,7 @@
 import  { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { House, Volleyball, Spotlight, Users, Trophy } from "lucide-react";
+import PATHS from "../../Route";
 const Header = ({ user, logout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -9,7 +10,7 @@ const Header = ({ user, logout }) => {
 
   // Navigation items for public website
   const navigation = [
-    { name: "Home", href: "/", icon: <House /> },
+    { name: "Home", href:PATHS.HOME , icon: <House /> },
     { name: "Matches", href: "/matches", icon: <Volleyball /> },
     { name: "Highlights", href: "/highlights", icon:<Spotlight /> },
     { name: "Teams", href: "/teams", icon: <Users />},
@@ -32,7 +33,7 @@ const Header = ({ user, logout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/dashboard" className="flex-shrink-0 flex items-center">
+          <Link to={PATHS.HOME} className="flex-shrink-0 flex items-center">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">SS</span>
             </div>
@@ -155,13 +156,13 @@ const Header = ({ user, logout }) => {
               /* User is not logged in */
               <div className="flex items-center space-x-3">
                 <Link
-                  to="/login"
+                  to={PATHS.SIGNIN}
                   className="px-6 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
-                  to="/register"
+                  to={PATHS.REGISTER}
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
                 >
                   Sign Up

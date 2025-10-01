@@ -7,8 +7,10 @@ import {
   Navigate
 } from 'react-router'
 import Home from "./website/Home"
-import AdminDashboard from "./dashboard/AdminDashboard"
 import PATHS from "./Route"
+import Register from "./website/pages/auth/Register"
+import SignIn from "./website/pages/auth/SignIn";
+import AdminDashboard from "./dashboard/AdminDashboard"
 import SchoolSportsDashboard from "./dashboard/SchoolSportsDashboard"
 import TeamDetailView from "./dashboard/TeamDetailView"
 import OfficialsDashboard from "./dashboard/OfficialsDashboard"
@@ -20,7 +22,10 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path={PATHS.HOME} element={<Home/>} />
+          <Route path={PATHS.HOME} element={<Home />} />
+          <Route path={PATHS.REGISTER} element={<Register />} />
+          <Route path={PATHS.SIGNIN} element={<SignIn />} />
+
           <Route path={PATHS.ADMINDASHBOARD} element={<AdminDashboard/>} />
           <Route path={PATHS.SCHOOLSPORTSDASHBOARD} element={<SchoolSportsDashboard/>} />
           <Route path={PATHS.TEAMDETAILVIEW} element={<TeamDetailView/>}/>
@@ -28,7 +33,7 @@ function App() {
         </Routes>
       </Router>
     </>
-  )
+  );
 }
 
 export default App
