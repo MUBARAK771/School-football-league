@@ -11,7 +11,7 @@ const Header = ({ user, logout }) => {
   // Navigation items for public website
   const navigation = [
     { name: "Home", href:PATHS.HOME , icon: <House /> },
-    { name: "Matches", href: "/matches", icon: <Volleyball /> },
+    { name: "Matches", href: PATHS.MATCHES, icon: <Volleyball /> },
     { name: "Highlights", href: "/highlights", icon:<Spotlight /> },
     { name: "Teams", href: "/teams", icon: <Users />},
     { name: "Leaderboard", href: "/leaderboard", icon: <Trophy /> },
@@ -157,16 +157,10 @@ const Header = ({ user, logout }) => {
               <div className="flex items-center space-x-3">
                 <Link
                   to={PATHS.SIGNIN}
-                  className="px-6 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to={PATHS.REGISTER}
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
                 >
-                  Sign Up
-                </Link>
+                  Sign In
+                  </Link>
               </div>
             )}
 
@@ -222,7 +216,10 @@ const Header = ({ user, logout }) => {
               ))}
             </div>
 
+
+
             {/* Mobile auth section */}
+
           </div>
         )}
       </div>
