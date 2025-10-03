@@ -12,6 +12,7 @@ import Register from "./website/pages/auth/Register"
 import SignIn from "./website/pages/auth/SignIn";
 import AdminDashboard from "./dashboard/AdminDashboard"
 import SchoolSportsDashboard from "./dashboard/SchoolSportsDashboard"
+import ResultsDashboard from "./dashboard/Results/ResultsDashboard"
 import TeamDetailView from "./dashboard/TeamDetailView"
 import OfficialsDashboard from "./dashboard/OfficialsDashboard"
 
@@ -30,6 +31,7 @@ function App() {
           <Route path={PATHS.SCHOOLSPORTSDASHBOARD} element={<SchoolSportsDashboard/>} />
           <Route path={PATHS.TEAMDETAILVIEW} element={<TeamDetailView/>}/>
           <Route path={PATHS.OFFICIALSDASHBOARD} element={<OfficialsDashboard/>}/>
+          <Route path={PATHS.RESULTSDASHBOARD} element={<ResultsDashboard/>}/>
         </Routes>
       </Router>
     </>

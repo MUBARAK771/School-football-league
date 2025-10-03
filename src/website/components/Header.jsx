@@ -223,24 +223,6 @@ const Header = ({ user, logout }) => {
             </div>
 
             {/* Mobile auth section */}
-            {!user && (
-              <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-3 px-2">
-                <Link
-                  to="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-center px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
           </div>
         )}
       </div>

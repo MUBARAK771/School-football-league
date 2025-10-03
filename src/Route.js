@@ -5,6 +5,7 @@ const PATHS={
 		ADMINDASHBOARD: "/dashboard/AdminDashboard",
 		SCHOOLSPORTSDASHBOARD:"/dashboard/SchoolSportsDashboard",
 		TEAMDETAILVIEW:"/dashboard/TeamDetailView",
-		OFFICIALSDASHBOARD:"/dashboard/OfficialsDashboard"
+		OFFICIALSDASHBOARD:"/dashboard/OfficialsDashboard",
+		RESULTSDASHBOARD:"/dashboard/ResultsDashboard",
 }
 export default  PATHS
