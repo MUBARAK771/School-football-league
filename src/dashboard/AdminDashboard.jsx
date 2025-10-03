@@ -23,7 +23,6 @@ import {
   Activity,
   X,
   Flag,
-  // Card,
   Shirt,
   Users as TeamIcon,
   Clock,
@@ -31,7 +30,15 @@ import {
   AlertTriangle,
   CheckCircle,
   Play,
-  Pause
+  Pause,
+  Save,
+  Mail,
+  Phone,
+  Globe,
+  Lock,
+  CreditCard,
+  Shield,
+  HelpCircle
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -40,6 +47,26 @@ const AdminDashboard = () => {
   const [selectedSport, setSelectedSport] = useState('all');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetails, setShowMatchDetails] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [settings, setSettings] = useState({
+    schoolName: 'SportsAdmin Pro',
+    adminEmail: 'admin@sportsadmin.com',
+    contactPhone: '+1 (555) 123-4567',
+    website: 'www.sportsadmin.com',
+    notifications: {
+      email: true,
+      sms: false,
+      push: true
+    },
+    security: {
+      twoFactor: true,
+      sessionTimeout: 30
+    },
+    billing: {
+      plan: 'pro',
+      billingCycle: 'monthly'
+    }
+  });
 
   // Mock data
   const adminStats = [
@@ -57,6 +84,7 @@ const AdminDashboard = () => {
     { id: 5, action: 'Payment received', user: 'North High School', time: '2 hours ago', type: 'payment' }
   ];
 
+  // Complete matches data
   const matches = [
     { 
       id: 1, 
@@ -200,6 +228,69 @@ const AdminDashboard = () => {
   ];
 
   const sports = ['all', 'basketball', 'soccer', 'volleyball', 'baseball', 'tennis'];
+
+  // Add schools data for the schools view
+  const schoolsData = [
+    { id: 1, name: 'North High School', location: 'Springfield', teams: 12, students: 245, contact: 'admin@northhigh.edu' },
+    { id: 2, name: 'South High School', location: 'Springfield', teams: 10, students: 198, contact: 'admin@southhigh.edu' },
+    { id: 3, name: 'East High School', location: 'Springfield', teams: 8, students: 167, contact: 'admin@easthigh.edu' },
+    { id: 4, name: 'West High School', location: 'Springfield', teams: 11, students: 223, contact: 'admin@westhigh.edu' },
+    { id: 5, name: 'Central High School', location: 'Springfield', teams: 9, students: 185, contact: 'admin@centralhigh.edu' },
+    { id: 6, name: 'Springfield Academy', location: 'Springfield', teams: 7, students: 142, contact: 'admin@springfieldacademy.edu' }
+  ];
+
+  // Search functionality
+  const filteredMatches = matches.filter(match => 
+    match.homeTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.awayTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSchools = schoolsData.filter(school =>
+    school.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    school.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    school.contact.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Settings handlers
+  const handleSettingChange = (section, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleNestedSettingChange = (section, subSection, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [subSection]: {
+          ...prev[section][subSection],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleSaveSettings = () => {
+    // In a real app, you would send this to your backend
+    console.log('Saving settings:', settings);
+    alert('Settings saved successfully!');
+  };
 
   const StatCard = ({ title, value, change, icon: Icon, color, trend }) => (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
@@ -688,7 +779,10 @@ const AdminDashboard = () => {
           ].map((item) => (
             <button
               key={item.name}
-              onClick={() => setActiveView(item.name.toLowerCase())}
+              onClick={() => {
+                setActiveView(item.name.toLowerCase());
+                setSearchQuery(''); // Clear search when changing views
+              }}
               className={`w-full flex items-center px-6 py-3 text-left transition-all duration-200 ${
                 item.active 
                   ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600 font-semibold' 
@@ -735,8 +829,10 @@ const AdminDashboard = () => {
                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search matches, users, schools..."
+                  placeholder={`Search ${activeView}...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-80"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </div>
@@ -767,6 +863,11 @@ const AdminDashboard = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 capitalize">{activeView}</h1>
               <p className="text-gray-600 mt-1">Manage your school sports platform efficiently</p>
+              {searchQuery && (
+                <p className="text-sm text-blue-600 mt-1">
+                  Showing {filteredMatches.length || filteredUsers.length || filteredSchools.length} results for "{searchQuery}"
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-3">
               <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
@@ -875,9 +976,16 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {matches.map((match) => (
+                    {(searchQuery ? filteredMatches : matches).map((match) => (
                       <MatchRow key={match.id} match={match} />
                     ))}
+                    {searchQuery && filteredMatches.length === 0 && (
+                      <tr>
+                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                          No matches found for "{searchQuery}"
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -891,11 +999,6 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
                   <div className="flex items-center space-x-3">
-                    <input
-                      type="text"
-                      placeholder="Search users..."
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                       <Filter className="w-4 h-4" />
                     </button>
@@ -915,23 +1018,272 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user) => (
+                    {(searchQuery ? filteredUsers : users).map((user) => (
                       <UserRow key={user.id} user={user} />
                     ))}
+                    {searchQuery && filteredUsers.length === 0 && (
+                      <tr>
+                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                          No users found for "{searchQuery}"
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
 
+          {/* Schools View */}
+          {activeView === 'schools' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">Schools Management</h2>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {(searchQuery ? filteredSchools : schoolsData).map((school) => (
+                    <div key={school.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{school.name}</h3>
+                            <p className="text-sm text-gray-500">{school.location}</p>
+                          </div>
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center text-white">
+                            <School className="w-6 h-6" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 mb-4">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">Active Teams:</span>
+                            <span className="font-medium text-gray-900">{school.teams}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">Student Athletes:</span>
+                            <span className="font-medium text-gray-900">{school.students}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">Contact:</span>
+                            <span className="font-medium text-gray-900 text-blue-600">{school.contact}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex space-x-2">
+                          <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 py-2 rounded-lg text-sm font-medium transition-colors">
+                            View Teams
+                          </button>
+                          <button className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Contact
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {searchQuery && filteredSchools.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No schools found for "{searchQuery}"
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Settings View */}
+          {activeView === 'settings' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
+                <p className="text-gray-600 mt-1">Manage your platform settings and preferences</p>
+              </div>
+              
+              <div className="p-6 space-y-8">
+                {/* General Settings */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <Settings className="w-5 h-5 mr-2 text-blue-600" />
+                    General Settings
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Mail className="w-4 h-4 inline mr-2" />
+                        School Name
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.schoolName}
+                        onChange={(e) => handleSettingChange('schoolName', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Mail className="w-4 h-4 inline mr-2" />
+                        Admin Email
+                      </label>
+                      <input
+                        type="email"
+                        value={settings.adminEmail}
+                        onChange={(e) => handleSettingChange('adminEmail', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Phone className="w-4 h-4 inline mr-2" />
+                        Contact Phone
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.contactPhone}
+                        onChange={(e) => handleSettingChange('contactPhone', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Globe className="w-4 h-4 inline mr-2" />
+                        Website
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.website}
+                        onChange={(e) => handleSettingChange('website', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notification Settings */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <Bell className="w-5 h-5 mr-2 text-green-600" />
+                    Notification Settings
+                  </h3>
+                  <div className="space-y-4">
+                    {Object.entries(settings.notifications).map(([key, value]) => (
+                      <div key={key} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium text-gray-900 capitalize">{key} Notifications</p>
+                          <p className="text-sm text-gray-500">Receive {key} notifications for important updates</p>
+                        </div>
+                        <button
+                          onClick={() => handleNestedSettingChange('notifications', key, !value)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            value ? 'bg-blue-600' : 'bg-gray-300'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              value ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Security Settings */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <Shield className="w-5 h-5 mr-2 text-red-600" />
+                    Security Settings
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Two-Factor Authentication</p>
+                        <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                      </div>
+                      <button
+                        onClick={() => handleNestedSettingChange('security', 'twoFactor', !settings.security.twoFactor)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          settings.security.twoFactor ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            settings.security.twoFactor ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Session Timeout (minutes)
+                      </label>
+                      <select
+                        value={settings.security.sessionTimeout}
+                        onChange={(e) => handleNestedSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value={15}>15 minutes</option>
+                        <option value={30}>30 minutes</option>
+                        <option value={60}>60 minutes</option>
+                        <option value={120}>2 hours</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Billing Settings */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <CreditCard className="w-5 h-5 mr-2 text-purple-600" />
+                    Billing Settings
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Plan</label>
+                      <select
+                        value={settings.billing.plan}
+                        onChange={(e) => handleNestedSettingChange('billing', 'plan', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="basic">Basic</option>
+                        <option value="pro">Pro</option>
+                        <option value="enterprise">Enterprise</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Billing Cycle</label>
+                      <select
+                        value={settings.billing.billingCycle}
+                        onChange={(e) => handleNestedSettingChange('billing', 'billingCycle', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="flex justify-end pt-6 border-t border-gray-200">
+                  <button
+                    onClick={handleSaveSettings}
+                    className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Settings</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Other Views Placeholder */}
-          {(activeView === 'schools' || activeView === 'schedule' || activeView === 'analytics' || activeView === 'settings') && (
+          {(activeView === 'schedule' || activeView === 'analytics') && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                {activeView === 'schools' && <School className="w-8 h-8 text-blue-600" />}
                 {activeView === 'schedule' && <Calendar className="w-8 h-8 text-blue-600" />}
                 {activeView === 'analytics' && <TrendingUp className="w-8 h-8 text-blue-600" />}
-                {activeView === 'settings' && <Settings className="w-8 h-8 text-blue-600" />}
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2 capitalize">{activeView} View</h3>
               <p className="text-gray-600 max-w-md mx-auto">

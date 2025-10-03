@@ -30,7 +30,14 @@ import {
   Star,
   Activity,
   Target,
-  PieChart
+  PieChart,
+  Mail,
+  Phone,
+  Globe,
+  Lock,
+  CreditCard,
+  Save,
+  HelpCircle
 } from 'lucide-react';
 import { Link } from 'react-router';
 import PATHS from '../Route';
@@ -39,6 +46,36 @@ const SchoolSportsDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activePage, setActivePage] = useState('dashboard');
   const [activeSport, setActiveSport] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [settings, setSettings] = useState({
+    profile: {
+      firstName: 'John',
+      lastName: 'Wilson',
+      email: 'john.wilson@school.edu',
+      phone: '+1 (555) 123-4567',
+      school: 'North High School',
+      role: 'Coach & Admin'
+    },
+    notifications: {
+      matchUpdates: true,
+      teamAnnouncements: true,
+      scheduleChanges: true,
+      performanceReports: false,
+      emailNotifications: true,
+      pushNotifications: true
+    },
+    security: {
+      twoFactorAuth: true,
+      sessionTimeout: 30,
+      loginAlerts: true
+    },
+    preferences: {
+      theme: 'light',
+      language: 'english',
+      timezone: 'EST',
+      dateFormat: 'MM/DD/YYYY'
+    }
+  });
 
   // Mock data for all pages
   const dashboardStats = [
@@ -122,6 +159,82 @@ const SchoolSportsDashboard = () => {
 
   const sports = ['all', 'basketball', 'soccer', 'volleyball', 'baseball', 'tennis'];
 
+  // Search functionality
+  const filteredMatches = matchesData.filter(match => 
+    match.homeTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.awayTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    match.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredTeams = teamsData.filter(team =>
+    team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    team.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    team.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    team.coach.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSchools = schoolsData.filter(school =>
+    school.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    school.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    school.contact.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSchedule = scheduleData.filter(event =>
+    event.event.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.teams.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.type.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Settings handlers
+  const handleProfileChange = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleNotificationChange = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      notifications: {
+        ...prev.notifications,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSecurityChange = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      security: {
+        ...prev.security,
+        [field]: value
+      }
+    }));
+  };
+
+  const handlePreferenceChange = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveSettings = () => {
+    // In a real app, you would send this to your backend
+    console.log('Saving settings:', settings);
+    alert('Settings saved successfully!');
+  };
+
   // Reusable Components
   const StatCard = ({ title, value, change, icon: Icon, color }) => (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
@@ -140,11 +253,16 @@ const SchoolSportsDashboard = () => {
     </div>
   );
 
-  const PageHeader = ({ title, description, action }) => (
+  const PageHeader = ({ title, description, action, searchResults }) => (
     <div className="flex items-center justify-between mb-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
         <p className="text-gray-600 mt-2">{description}</p>
+        {searchQuery && searchResults !== undefined && (
+          <p className="text-sm text-blue-600 mt-1">
+            Showing {searchResults} results for "{searchQuery}"
+          </p>
+        )}
       </div>
       {action}
     </div>
@@ -184,7 +302,7 @@ const SchoolSportsDashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {matchesData.slice(0, 3).map((match) => (
+                {(searchQuery ? filteredMatches : matchesData.slice(0, 3)).map((match) => (
                   <div key={match.id} className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className={`w-3 h-3 rounded-full ${match.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
@@ -199,6 +317,11 @@ const SchoolSportsDashboard = () => {
                     </div>
                   </div>
                 ))}
+                {searchQuery && filteredMatches.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No matches found for "{searchQuery}"
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -209,7 +332,7 @@ const SchoolSportsDashboard = () => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Team Performance</h3>
             <div className="space-y-4">
-              {teamsData.map((team) => (
+              {(searchQuery ? filteredTeams : teamsData).map((team) => (
                 <div key={team.id} className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-gray-900">{team.name}</p>
@@ -221,6 +344,11 @@ const SchoolSportsDashboard = () => {
                   </div>
                 </div>
               ))}
+              {searchQuery && filteredTeams.length === 0 && (
+                <div className="text-center py-4 text-gray-500 text-sm">
+                  No teams found for "{searchQuery}"
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -233,6 +361,7 @@ const SchoolSportsDashboard = () => {
       <PageHeader 
         title="Matches & Results" 
         description="Manage and view all match information"
+        searchResults={filteredMatches.length}
         action={
           <div className="flex items-center space-x-3">
             <div className="flex bg-gray-100 rounded-lg p-1">
@@ -259,7 +388,7 @@ const SchoolSportsDashboard = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {matchesData.map((match) => (
+        {(searchQuery ? filteredMatches : matchesData).map((match) => (
           <div key={match.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
@@ -325,6 +454,15 @@ const SchoolSportsDashboard = () => {
             </div>
           </div>
         ))}
+        {searchQuery && filteredMatches.length === 0 && (
+          <div className="col-span-3 text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No matches found</h3>
+            <p className="text-gray-500">No matches match your search for "{searchQuery}"</p>
+          </div>
+        )}
       </div>
     </>
   );
@@ -334,6 +472,7 @@ const SchoolSportsDashboard = () => {
       <PageHeader 
         title="Team Management" 
         description="View and manage all school teams"
+        searchResults={filteredTeams.length}
         action={
           <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
             <Plus className="w-4 h-4" />
@@ -343,7 +482,7 @@ const SchoolSportsDashboard = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamsData.map((team) => (
+        {(searchQuery ? filteredTeams : teamsData).map((team) => (
           <div key={team.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -376,7 +515,7 @@ const SchoolSportsDashboard = () => {
               </div>
 
               <div className="flex space-x-2">
-                <Link to={PATHS.TEAMDETAILVIEW} className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 py-2 rounded-lg text-sm font-medium transition-colors">
+                <Link to={PATHS.TEAMDETAILVIEW} className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 py-2 rounded-lg text-sm font-medium transition-colors text-center">
                   View Roster
                 </Link>
                 <button className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -386,6 +525,15 @@ const SchoolSportsDashboard = () => {
             </div>
           </div>
         ))}
+        {searchQuery && filteredTeams.length === 0 && (
+          <div className="col-span-3 text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No teams found</h3>
+            <p className="text-gray-500">No teams match your search for "{searchQuery}"</p>
+          </div>
+        )}
       </div>
     </>
   );
@@ -395,6 +543,7 @@ const SchoolSportsDashboard = () => {
       <PageHeader 
         title="Event Schedule" 
         description="View and manage upcoming events and matches"
+        searchResults={filteredSchedule.length}
         action={
           <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
             <Plus className="w-4 h-4" />
@@ -419,7 +568,7 @@ const SchoolSportsDashboard = () => {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {scheduleData.map((event) => (
+            {(searchQuery ? filteredSchedule : scheduleData).map((event) => (
               <div key={event.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-blue-300 transition-colors">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex flex-col items-center justify-center">
@@ -458,6 +607,11 @@ const SchoolSportsDashboard = () => {
                 </div>
               </div>
             ))}
+            {searchQuery && filteredSchedule.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No events found for "{searchQuery}"
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -540,6 +694,7 @@ const SchoolSportsDashboard = () => {
       <PageHeader 
         title="Schools Directory" 
         description="Manage partner schools and institutions"
+        searchResults={filteredSchools.length}
         action={
           <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
             <Plus className="w-4 h-4" />
@@ -549,7 +704,7 @@ const SchoolSportsDashboard = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {schoolsData.map((school) => (
+        {(searchQuery ? filteredSchools : schoolsData).map((school) => (
           <div key={school.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -588,6 +743,15 @@ const SchoolSportsDashboard = () => {
             </div>
           </div>
         ))}
+        {searchQuery && filteredSchools.length === 0 && (
+          <div className="col-span-3 text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <School className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No schools found</h3>
+            <p className="text-gray-500">No schools match your search for "{searchQuery}"</p>
+          </div>
+        )}
       </div>
     </>
   );
@@ -598,8 +762,11 @@ const SchoolSportsDashboard = () => {
         title="Settings & Configuration" 
         description="Manage your account and platform settings"
         action={
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
-            <Settings className="w-4 h-4" />
+          <button 
+            onClick={handleSaveSettings}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            <Save className="w-4 h-4" />
             <span>Save Changes</span>
           </button>
         }
@@ -609,25 +776,68 @@ const SchoolSportsDashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Settings */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Settings</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <User className="w-5 h-5 mr-2 text-blue-600" />
+              Profile Settings
+            </h3>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                  <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" defaultValue="John" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <User className="w-4 h-4 inline mr-2" />
+                    First Name
+                  </label>
+                  <input 
+                    type="text" 
+                    value={settings.profile.firstName}
+                    onChange={(e) => handleProfileChange('firstName', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                  <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" defaultValue="Wilson" />
+                  <input 
+                    type="text" 
+                    value={settings.profile.lastName}
+                    onChange={(e) => handleProfileChange('lastName', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" defaultValue="john.wilson@school.edu" />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Mail className="w-4 h-4 inline mr-2" />
+                  Email
+                </label>
+                <input 
+                  type="email" 
+                  value={settings.profile.email}
+                  onChange={(e) => handleProfileChange('email', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">School</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Phone className="w-4 h-4 inline mr-2" />
+                  Phone
+                </label>
+                <input 
+                  type="text" 
+                  value={settings.profile.phone}
+                  onChange={(e) => handleProfileChange('phone', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <School className="w-4 h-4 inline mr-2" />
+                  School
+                </label>
+                <select 
+                  value={settings.profile.school}
+                  onChange={(e) => handleProfileChange('school', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
                   <option>North High School</option>
                   <option>East High School</option>
                   <option>South High School</option>
@@ -639,17 +849,96 @@ const SchoolSportsDashboard = () => {
 
           {/* Notification Settings */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
-            <div className="space-y-3">
-              {['Match updates', 'Team announcements', 'Schedule changes', 'Performance reports'].map((item) => (
-                <div key={item} className="flex items-center justify-between">
-                  <span className="text-gray-700">{item}</span>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" defaultChecked />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Bell className="w-5 h-5 mr-2 text-green-600" />
+              Notification Preferences
+            </h3>
+            <div className="space-y-4">
+              {Object.entries(settings.notifications).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900 capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                    </p>
+                    <p className="text-sm text-gray-500">Receive notifications for {key.toLowerCase().replace(/([A-Z])/g, ' $1')}</p>
+                  </div>
+                  <button
+                    onClick={() => handleNotificationChange(key, !value)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      value ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        value ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Security Settings */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Shield className="w-5 h-5 mr-2 text-red-600" />
+              Security Settings
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">Two-Factor Authentication</p>
+                  <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                </div>
+                <button
+                  onClick={() => handleSecurityChange('twoFactorAuth', !settings.security.twoFactorAuth)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.security.twoFactorAuth ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.security.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">Login Alerts</p>
+                  <p className="text-sm text-gray-500">Get notified of new sign-ins</p>
+                </div>
+                <button
+                  onClick={() => handleSecurityChange('loginAlerts', !settings.security.loginAlerts)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.security.loginAlerts ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.security.loginAlerts ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Session Timeout
+                </label>
+                <select
+                  value={settings.security.sessionTimeout}
+                  onChange={(e) => handleSecurityChange('sessionTimeout', parseInt(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value={15}>15 minutes</option>
+                  <option value={30}>30 minutes</option>
+                  <option value={60}>60 minutes</option>
+                  <option value={120}>2 hours</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -665,11 +954,58 @@ const SchoolSportsDashboard = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Role</span>
-                <span className="font-medium">Coach & Admin</span>
+                <span className="font-medium">{settings.profile.role}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Teams managed</span>
                 <span className="font-medium">3 teams</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Last login</span>
+                <span className="font-medium">2 hours ago</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Preferences */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Preferences</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                <select
+                  value={settings.preferences.theme}
+                  onChange={(e) => handlePreferenceChange('theme', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                  <option value="auto">Auto</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                <select
+                  value={settings.preferences.language}
+                  onChange={(e) => handlePreferenceChange('language', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="english">English</option>
+                  <option value="spanish">Spanish</option>
+                  <option value="french">French</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                <select
+                  value={settings.preferences.timezone}
+                  onChange={(e) => handlePreferenceChange('timezone', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="EST">Eastern Time (EST)</option>
+                  <option value="CST">Central Time (CST)</option>
+                  <option value="PST">Pacific Time (PST)</option>
+                </select>
               </div>
             </div>
           </div>
@@ -741,7 +1077,10 @@ const SchoolSportsDashboard = () => {
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActivePage(item.id)}
+              onClick={() => {
+                setActivePage(item.id);
+                setSearchQuery(''); // Clear search when changing pages
+              }}
               className={`w-full flex items-center px-6 py-3 text-left transition-all duration-200 ${
                 activePage === item.id
                   ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600 font-semibold' 
@@ -781,8 +1120,10 @@ const SchoolSportsDashboard = () => {
                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search matches, teams, players..."
+                  placeholder={`Search ${activePage}...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-80 transition-all"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </div>
