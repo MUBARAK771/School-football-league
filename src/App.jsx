@@ -8,8 +8,8 @@ import {
 } from 'react-router'
 import Home from "./website/Home"
 import PATHS from "./Route"
-import Register from "./website/pages/auth/Register"
 import SignIn from "./website/pages/auth/SignIn";
+import Matches from "./website/pages/Matches"
 function App() {
   
 
@@ -18,8 +18,9 @@ function App() {
       <Router>
         <Routes>
           <Route path={PATHS.HOME} element={<Home />} />
-          <Route path={PATHS.REGISTER} element={<Register />} />
           <Route path={PATHS.SIGNIN} element={<SignIn />} />
+          <Route path="*" element={<Navigate to={PATHS.HOME} replace />} />
+          <Route path={PATHS.MATCHES} element={<Matches/>} />
         </Routes>
       </Router>
     </>
