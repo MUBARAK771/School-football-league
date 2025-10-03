@@ -9,7 +9,14 @@ import {
 import Home from "./website/Home"
 import PATHS from "./Route"
 import SignIn from "./website/pages/auth/SignIn";
+
 import Matches from "./website/pages/Matches"
+
+import AdminDashboard from "./dashboard/AdminDashboard"
+import SchoolSportsDashboard from "./dashboard/SchoolSportsDashboard"
+import TeamDetailView from "./dashboard/TeamDetailView"
+import OfficialsDashboard from "./dashboard/OfficialsDashboard"
+
 function App() {
   
 
@@ -19,8 +26,15 @@ function App() {
         <Routes>
           <Route path={PATHS.HOME} element={<Home />} />
           <Route path={PATHS.SIGNIN} element={<SignIn />} />
+
           <Route path="*" element={<Navigate to={PATHS.HOME} replace />} />
           <Route path={PATHS.MATCHES} element={<Matches/>} />
+
+
+          <Route path={PATHS.ADMINDASHBOARD} element={<AdminDashboard/>} />
+          <Route path={PATHS.SCHOOLSPORTSDASHBOARD} element={<SchoolSportsDashboard/>} />
+          <Route path={PATHS.TEAMDETAILVIEW} element={<TeamDetailView/>}/>
+          <Route path={PATHS.OFFICIALSDASHBOARD} element={<OfficialsDashboard/>}/>
         </Routes>
       </Router>
     </>
