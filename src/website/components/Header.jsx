@@ -215,6 +215,11 @@ const Header = ({ user, logout }) => {
                 </Link>
               ))}
             </div>
+
+
+
+            {/* Mobile auth section */}
+
           </div>
         )}
       </div>
